@@ -1,10 +1,33 @@
 {
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "express": "^5.1.0",
     "init": "^0.1.2",
-    "mongoose": "^8.19.2"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.2",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
-  }
+  },
+  "name": "expressjs-si52-2025-2026-tugas-lollyy28",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Let-sLearnCodingTogether/expressjs-si52-2025-2026-tugas-lollyy28.git"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Let-sLearnCodingTogether/expressjs-si52-2025-2026-tugas-lollyy28/issues"
+  },
+  "homepage": "https://github.com/Let-sLearnCodingTogether/expressjs-si52-2025-2026-tugas-lollyy28#readme"
 }

@@ -1,89 +1,73 @@
-const User = require('../models/userModel');
-const jwt = require('jsonwebtoken');
+import { compare } from "bcrypt";
+import UserModel from "../model/userModel.js";
+import { hash } from "../utils/hashUtils.js";
+import { jwtSignUtil } from "../utils/jwtSignUtils.js";
 
-const JWT_SECRET = 'kunci123hbasd';
+export const register = async (req, res) => {
+    try {
 
-// untuk buat token JWT
-const generateToken = (id) => {
-  return jwt.sign({ id }, JWT_SECRET, { expiresIn: '1d' });
-};
+        //untuk mengambil body atau data dari request
+        const registerData = req.body
 
-// register
-exports.register = async (req, res) => {
-  
-  console.log('Req Body : ' + req.body);
+        console.log(registerData);
 
-  try {
+        const hashPassword = hash(registerData.password)
+ 
+        await UserModel.create({
+            username : registerData.username,
+            email : registerData.email,
+            password : hashPassword
+        })
 
-    const { name, email, password } = req.body;
-
-    // cek email sudah ada
-    const userExists = await User.findOne({ email });
-    if (userExists) return res.status(400).json({ message: 'Email Sudah Terdaftar' });
-
-    const user = await User.create({ name, email, password });
-
-    res.status(201).json({
-      success: true,
-      message: 'User Berhasil Mendaftar',
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-      },
-      token: generateToken(user._id),
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-// login
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Email Atau Password Salah' });
-
-    const isMatch = await user.matchPassword(password);
-    if (!isMatch) return res.status(400).json({ message: 'Password Salah' });
-
-    res.json({
-      success: true,
-      message: 'Login Berhasil',
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-      },
-      token: generateToken(user._id),
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-// profil
-exports.profil = async (req, res) => {
-  try {
-    // req.user diambil dari middleware protect
-    const user = req.user;
-
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'User Tidak Ditemukan' });
+        res.status(201).json({
+            message : "Berhasil register, silahkan login",
+            data : null
+        })
+    } catch(e) {
+        res.status(500).json({
+            message : e.message,
+            data : null
+        })
     }
+}
 
-    res.json({
-      success: true,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        createdAt: user.createdAt,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
+export const login = async (req,res) => {
+    try {
+        const loginData = req.body
+
+        const user =  await UserModel.findOne({
+            email : loginData.email
+        })
+
+        //jika user tidak ditemukan
+        if(!user){
+            res.status(404).json({
+                message : "User tidak ditemukan",
+                data : null
+            })
+        }
+
+        // membandingkan password yang ada di dalam db dengan request
+        if(compare(loginData.password, user.password)) {
+            return res.status(200).json({
+                message : "Login Berhasil",
+                data : {
+                    username : user.username,
+                    email : user.email,
+                    token : jwtSignUtil(user)// Melakukan sign JWT token
+                }
+            })
+        }
+
+        return res.status(401).json({
+                message : "Login Gagal",
+                data : null
+            })
+
+    } catch (error) {
+        res.status(500).json({
+            message : error.message,
+            data : null
+        })
+    }
+}

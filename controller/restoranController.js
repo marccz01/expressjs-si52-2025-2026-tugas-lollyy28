@@ -1,55 +1,109 @@
-const Restoran = require('../models/restoranModel');
-
-// semua restoran
-exports.getAllRestoran = async (req, res) => {
+export const createRestoran = async (req, res) => {
   try {
-    const restoran = await Restoran.find();
-    res.json({ success: true, data: restoran });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+   const request = req.body
+
+        const response = await modelRestoran.create({
+            restoranName : request.restoranName,
+            location : request.location,
+            favoriteDish : request.favoriteDish
+        })
+
+        res.status(201).json({
+            message : "Data berhasil dibuat",
+            data : response
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+           message : error,
+            data : null
+        })
   }
 };
 
-// restoran by ID
-exports.getRestoranById = async (req, res) => {
+export const listRestoran = async (req, res) => {
   try {
-    const restoran = await Restoran.findById(req.params.id);
-    if (!restoran) return res.status(404).json({ message: 'Restoran tidak ditemukan' });
-    res.json({ success: true, data: restoran });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    const data = await modelRestoran.find({})
+
+        res.status(200).json({
+            message: "List Data",
+            data : data
+        })
+    } catch (error) {
+        res.status(500).json({
+            message : error,
+            data : null
+        })
   }
 };
 
-// tambah restoran baru
-exports.createRestoran = async (req, res) => {
+export const updateRestoran = async (req, res) => {
   try {
-    const { nama, alamat, jenisMasakan, rating, hargaRataRata } = req.body;
-    const restoran = await Restoran.create({ nama, alamat, jenisMasakan, rating, hargaRataRata });
-    res.status(201).json({ success: true, message: 'Restoran berhasil ditambahkan', data: restoran });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    const id = req.params?.id
+        const request = req.body
+
+        if(!id){
+            return res.status(500).json({
+                message : "Id wajib diisi",
+                data : null
+            })
+        }
+
+         const response = await modelRestoran.findByIdAndUpdate(id, {
+            restoranName : request.restoranName,
+            location : request.location,
+            favoriteDish : request.favoriteDish
+         })
+
+        if(!response){
+            return res.status(500).json({
+                message : "Data gagal diupdate",
+                data : null
+            })
+        }
+
+        return res.status(200).json({
+            message : "Data mahasiswa berhasil diupdate"
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message : error,
+            data : null
+        })
   }
 };
 
-// update restoran
-exports.updateRestoran = async (req, res) => {
+export const deleteRestoran = async (req, res) => {
   try {
-    const restoran = await Restoran.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!restoran) return res.status(404).json({ message: 'Restoran tidak ditemukan' });
-    res.json({ success: true, message: 'Restoran berhasil diperbarui', data: restoran });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
+    const id = req.params.id
+        if(!id){
+            return res.status(500).json({
+                message : "Id wajib diisi",
+                data : null
+            })
+        }
 
-// hapus restoran
-exports.deleteRestoran = async (req, res) => {
-  try {
-    const restoran = await Restoran.findByIdAndDelete(req.params.id);
-    if (!restoran) return res.status(404).json({ message: 'Restoran tidak ditemukan' });
-    res.json({ success: true, message: 'Restoran berhasil dihapus' });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+        const response = await modelRestoran.findByIdAndDelete(id)
+
+        if(response){
+            return res.status(200).json({
+                message : "Data berhasil dihapus",
+                data : null
+            })
+        }
+
+        return res.status(404).json({
+                message : "Data tidak ditemukan",
+                data : null
+            })
+
+    } catch (error) {
+        res.status(500).json({
+            message : error,
+            data : null
+        })
   }
+
+  
 };

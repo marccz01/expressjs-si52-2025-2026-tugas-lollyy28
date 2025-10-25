@@ -1,28 +1,29 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose"
 
-const restoranSchema = new mongoose.Schema({
-  nama: {
-    type: String,
-    required: true,
-  },
-  alamat: {
-    type: String,
-    required: true,
-  },
-  jenisMasakan: {
-    type: String,
-    required: true,
-  },
-  rating: {
-    type: Number,
-    default: 0,
-    min: 0,
-    max: 5,
-  },
-  hargaRataRata: {
-    type: Number,
-    required: true,
-  },
-}, { timestamps: true });
+const restoranSchema = new mongoose.Schema (
+    {
+        restoranName : {
+            type : String,
+            required : [true, " User name wajib di isi"],
+            unique : true,
+            trim : true
+        },
+        location : {
+            type : String,
+            required : [true, "Email wajib di isi"],
+            unique : true,
+            trim : true
+        },
+        favoriteDish : {
+            type : String,
+            required : [true, " Password wajib di isi"]
+        }
+    },
+    {
+        timestamps : true
+    }
+)
 
-module.exports = mongoose.model('Restoran', restoranSchema);
+const modelRestoran = mongoose.model("resto", restoranSchema)
+
+export default modelRestoran

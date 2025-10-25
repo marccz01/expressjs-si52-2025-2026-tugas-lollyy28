@@ -1,16 +1,18 @@
-const mongoose = require('mongoose');
+import mongoose, { syncIndexes } from "mongoose";
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect('mongodb://localhost:27017/myapi', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('Berhasil Terhubung Ke MongoDB!');
-  } catch (error) {
-    console.error('Gagal Koneksi Ke MongoDB :', error.message);
-    process.exit(1);
-  }
-};
+export const database = async () => {
+    try {
+        console.log("Starting connection to mongodb...");
 
-module.exports = connectDB;
+        const response = await mongoose.connect("mongodb://127.0.0.1:27017/merisa?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.5.8")
+
+        console.log(`Connected succesfully to mongodb at : ${response.connection.host}`);
+
+    } catch (error) {
+        console.log("Mongodb connection failed");
+
+        process.exit(1)
+    }
+}
+
+export default database;

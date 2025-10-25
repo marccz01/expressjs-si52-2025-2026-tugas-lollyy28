@@ -1,25 +1,20 @@
-const express = require('express');
-const connectDB = require('./config/database');
-const userRoutes = require('./routes/userRoutes');
-const authRoutes = require('./routes/authRoutes');
-const restoranRoutes = require('./routes/restoranRoutes');
+import express from "express"
+import api from "./route/api.js";
+import database from "./config/database.js";
+import passport from "passport";S
 
 const app = express();
+app.use(express.json())
 
-// middleware
-app.use(express.json());
-// koneksi Database
-connectDB();
+app.use(passport.initialize())
 
-// routes
-app.use('/api/users', userRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/restoran', restoranRoutes);
+app.use(express.static('public'))
 
-app.get('/', (req, res) => {
-  res.send('API is running...');
-});
+app.set('view engine', 'ejs')
 
-// Jalankan Server
-const PORT = 3000;
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+app.use("/api", api)
+
+app.listen(3000, () => {
+    database()
+    console.log(`Aplikasi berjalan di http://localhost:3000`);
+})

@@ -1,27 +1,22 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/userModel');
+import passport from "passport";
 
-const JWT_SECRET = 'kunci123hbasd';
+export const protect = (req, res, next) => {
+    passport.authenticate(
+        "jwt", 
+        {
+        session : false,
+        }, 
+        (err, user, info) => {
+            if (err || !user) {
+                return res.status(401).json ({
+                    message : info ? info.message : "Unauthotized",
+                    err : err || "Tidak valid",
+            });
+        }
 
-exports.protect = async (req, res, next) => {
-  let token;
+        req.user = user;
 
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    try {
-      // ambil token dari header
-      token = req.headers.authorization.split(' ')[1];
-      // verifikasi token
-      const decoded = jwt.verify(token, JWT_SECRET);
-      // cari user berdasarkan id dari token
-      req.user = await User.findById(decoded.id).select('-password');
-
-      next();
-    } catch (error) {
-      return res.status(401).json({ message: 'Token Tidak Valid' });
-    }
-  }
-
-  if (!token) {
-    return res.status(401).json({ message: 'Token Wajib Diisi' });
-  }
+        return next();
+        }
+    )(req, res, next);
 };
