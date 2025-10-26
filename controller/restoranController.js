@@ -1,3 +1,5 @@
+import modelRestoran from "../model/modelRestoran.js"
+
 export const createRestoran = async (req, res) => {
   try {
    const request = req.body
@@ -9,7 +11,7 @@ export const createRestoran = async (req, res) => {
         })
 
         res.status(201).json({
-            message : "Data berhasil dibuat",
+            message : "Data Restoran berhasil dibuat",
             data : response
         })
         
@@ -26,7 +28,7 @@ export const listRestoran = async (req, res) => {
     const data = await modelRestoran.find({})
 
         res.status(200).json({
-            message: "List Data",
+            message: "List Data Restoran",
             data : data
         })
     } catch (error) {
@@ -63,7 +65,7 @@ export const updateRestoran = async (req, res) => {
         }
 
         return res.status(200).json({
-            message : "Data mahasiswa berhasil diupdate"
+            message : "Data restoran berhasil diupdate"
         })
 
     } catch (error) {
@@ -88,13 +90,13 @@ export const deleteRestoran = async (req, res) => {
 
         if(response){
             return res.status(200).json({
-                message : "Data berhasil dihapus",
+                message : "Data restoran berhasil dihapus",
                 data : null
             })
         }
 
         return res.status(404).json({
-                message : "Data tidak ditemukan",
+                message : "Data restoran tidak ditemukan",
                 data : null
             })
 

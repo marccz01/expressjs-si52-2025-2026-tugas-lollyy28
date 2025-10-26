@@ -1,4 +1,4 @@
-import UserModel from "../models/userModel.js";
+import UserModel from "../model/userModel.js";
 
 export const privateProfile = async (req, res) => {
     try {
