@@ -1,8 +1,9 @@
 import express from "express";
 import * as authController from "../controller/authController.js"
 import * as restoranController from "../controller/restoranController.js";
-import { protect } from "../middlewares/authMiddleware.js";
 import * as profileController from "../controller/profileController.js";
+import { protect } from "../middlewares/authMiddleware.js";
+
 const api = express.Router();
 
 api.post('/register', authController.register);
